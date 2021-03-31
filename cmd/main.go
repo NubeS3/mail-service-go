@@ -47,14 +47,16 @@ func main() {
 	qsub := getMailQSub(err)
 
 	sigs := make(chan os.Signal, 1)
+	cleanupDone := make(chan bool)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigs
+		_ = qsub.Unsubscribe()
 		_ = qsub.Close()
-		os.Exit(0)
+		cleanupDone <- true
 	}()
 
-	select {}
+	<-cleanupDone
 }
 
 func sendEmail(msg MailMessage) error {
@@ -77,10 +79,12 @@ func getMailQSub(err error) stan.Subscription {
 	}
 
 	qsub, _ := sc.QueueSubscribe(viper.GetString("Mail_subject"), "mail-qgroup", func(msg *stan.Msg) {
-		var data MailMessage
-		_ = json.Unmarshal(msg.Data, &data)
-		_ = sendEmail(data)
-		//TODO log email error
+		go func() {
+			var data MailMessage
+			_ = json.Unmarshal(msg.Data, &data)
+			_ = sendEmail(data)
+			//TODO log email error
+		}()
 	})
 	return qsub
 }
