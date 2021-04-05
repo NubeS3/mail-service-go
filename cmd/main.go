@@ -56,6 +56,7 @@ func main() {
 		cleanupDone <- true
 	}()
 
+	fmt.Println("Listening for mail events")
 	<-cleanupDone
 }
 
@@ -73,7 +74,7 @@ func sendEmail(msg MailMessage) error {
 }
 
 func getMailQSub(err error) stan.Subscription {
-	sc, err := stan.Connect(viper.GetString("Cluster_id"), viper.GetString("Client_id"), stan.NatsURL(viper.GetString("Nats_url")))
+	sc, err := stan.Connect(viper.GetString("Cluster_id"), viper.GetString("Client_id"), stan.NatsURL("nats://"+viper.GetString("Nats_url")))
 	if err != nil {
 		panic(fmt.Errorf("Fatal error connecting nats stream: %s \n", err))
 	}
