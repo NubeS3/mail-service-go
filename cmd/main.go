@@ -14,10 +14,9 @@ import (
 )
 
 type MailMessage struct {
-	Otp      string    `json:"otp"`
-	Username string    `json:"username"`
-	To       string    `json:"to"`
-	Exp      time.Time `json:"exp"`
+	Otp string    `json:"otp"`
+	To  string    `json:"to"`
+	Exp time.Time `json:"exp"`
 }
 
 var (
@@ -63,7 +62,7 @@ func main() {
 func sendEmail(msg MailMessage) error {
 	from := mail.NewEmail("Nubes3", serviceEmail)
 	subject := "Verify Email"
-	to := mail.NewEmail(msg.Username, msg.To)
+	to := mail.NewEmail(msg.To, msg.To)
 	content :=
 		"Enter the OTP we sent you via email to continue.\r\n\r\n" + msg.Otp + "\r\n\r\n" +
 			"The OTP will be expired at " + msg.Exp.Local().Format("02-01-2006 15:04") + ". Do not share it to public."
