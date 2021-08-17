@@ -1,0 +1,8 @@
+{
+  "SG_api_key": "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",
+  "Sg_email": "nubes3.storage@gmail.com",
+  "Cluster_id": "nubes3",
+  "Client_id": "mail-nubes3",
+  "Nats_url": "10.128.0.2:4222",
+  "Mail_subject": "nubes3_mail"
+}
